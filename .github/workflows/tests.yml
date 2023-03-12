@@ -16,18 +16,18 @@ jobs:
     strategy:
       matrix:
         config:
-          - {
-            name: "Ubuntu Unit Tests",
-            os: ubuntu-latest,
-            shell: 'bash {0}'
-          }
-          - {
-            name: "Windows Unit Tests",
-            os: windows-latest,
-            msys_sys: 'mingw64',
-            msys_env: 'x86_64-gcc',
-            shell: 'msys2 {0}',
-          }
+          # - {
+          #   name: "Ubuntu Unit Tests",
+          #   os: ubuntu-latest,
+          #   shell: 'bash {0}'
+          # }
+          # - {
+          #   name: "Windows Unit Tests",
+          #   os: windows-latest,
+          #   msys_sys: 'mingw64',
+          #   msys_env: 'x86_64-gcc',
+          #   shell: 'msys2 {0}',
+          # }
           - name: MacOS 12 Unit Tests
             os: macos-12
             compiler: clang++

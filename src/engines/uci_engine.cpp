@@ -3,8 +3,8 @@
 #include <sstream>
 #include <stdexcept>
 
+#include "../logger.hpp"
 #include "engine_config.hpp"
-
 namespace fast_chess
 {
 
@@ -41,6 +41,8 @@ bool UciEngine::isResponsive(int64_t threshold)
         return false;
 
     bool timeout = false;
+    Logger::coutInfo("Responsive test");
+
     writeProcess("isready");
     readProcess("readyok", timeout, threshold);
     return !timeout;
@@ -54,13 +56,16 @@ void UciEngine::sendUciNewGame()
 
 void UciEngine::sendUci()
 {
+    Logger::coutInfo("write uci");
     writeProcess("uci");
 }
 
 std::vector<std::string> UciEngine::readUci()
 {
     bool timeout = false;
-    return readProcess("uciok", timeout);
+    Logger::coutInfo("read uci");
+
+    return readProcess("uciok", timeout, ping_time_);
 }
 
 std::string UciEngine::buildGoInput(Color stm, const TimeControl &tc, const TimeControl &tc_2) const
@@ -149,6 +154,7 @@ void UciEngine::startEngine()
 
 void UciEngine::startEngine(const std::string &cmd)
 {
+    Logger::coutInfo("init process:", cmd);
     initProcess(cmd);
 
     sendUci();
@@ -161,6 +167,7 @@ void UciEngine::startEngine(const std::string &cmd)
 
     for (const auto &option : config_.options)
     {
+        Logger::coutInfo("send ucioption", option.first, option.second);
         sendSetoption(option.first, option.second);
     }
 }
