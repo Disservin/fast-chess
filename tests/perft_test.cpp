@@ -5,7 +5,7 @@
 
 using namespace fast_chess;
 
-TEST_CASE("Testing PERFT Startposition")
+TEST_CASE("PERFT Startposition")
 {
     Perft perf;
     Board b;
@@ -30,7 +30,7 @@ TEST_CASE("Testing PERFT Startposition")
     CHECK(perf.getAndResetNodes() == 119060324);
 }
 
-TEST_CASE("Testing PERFT 1.1")
+TEST_CASE("PERFT 1.1")
 {
     Perft perf;
     Board b;
@@ -39,7 +39,7 @@ TEST_CASE("Testing PERFT 1.1")
     CHECK(perf.getAndResetNodes() == 1930);
 }
 
-TEST_CASE("Testing PERFT 1.2")
+TEST_CASE("PERFT 1.2")
 {
     Perft perf;
     Board b;
@@ -48,7 +48,7 @@ TEST_CASE("Testing PERFT 1.2")
     CHECK(perf.getAndResetNodes() == 80360);
 }
 
-TEST_CASE("Testing PERFT 1.2")
+TEST_CASE("PERFT 1.2")
 {
     Perft perf;
     Board b;
@@ -57,7 +57,7 @@ TEST_CASE("Testing PERFT 1.2")
     CHECK(perf.getAndResetNodes() == 44);
 }
 
-TEST_CASE("Testing PERFT 1.3")
+TEST_CASE("PERFT 1.3")
 {
     Perft perf;
     Board b;
@@ -66,7 +66,7 @@ TEST_CASE("Testing PERFT 1.3")
     CHECK(perf.getAndResetNodes() == 100518);
 }
 
-TEST_CASE("Testing PERFT 1.4")
+TEST_CASE("PERFT 1.4")
 {
     Perft perf;
     Board b;
@@ -75,7 +75,7 @@ TEST_CASE("Testing PERFT 1.4")
     CHECK(perf.getAndResetNodes() == 2146);
 }
 
-TEST_CASE("Testing PERFT 1.5")
+TEST_CASE("PERFT 1.5")
 {
     Perft perf;
     Board b;
@@ -84,7 +84,7 @@ TEST_CASE("Testing PERFT 1.5")
     CHECK(perf.getAndResetNodes() == 3551583);
 }
 
-TEST_CASE("Testing PERFT 2")
+TEST_CASE("PERFT 2")
 {
     static constexpr int depth = 5;
 
@@ -108,7 +108,7 @@ TEST_CASE("Testing PERFT 2")
     CHECK(perf.getAndResetNodes() == 193690690ull);
 }
 
-TEST_CASE("Testing PERFT 3")
+TEST_CASE("PERFT 3")
 {
     static constexpr int depth = 7;
 
@@ -120,7 +120,7 @@ TEST_CASE("Testing PERFT 3")
     CHECK(perf.getAndResetNodes() == 178633661ull);
 }
 
-TEST_CASE("Testing PERFT 4")
+TEST_CASE("PERFT 4")
 {
     static constexpr int depth = 6;
 
@@ -132,7 +132,7 @@ TEST_CASE("Testing PERFT 4")
     CHECK(perf.getAndResetNodes() == 706045033ull);
 }
 
-TEST_CASE("Testing PERFT 5")
+TEST_CASE("PERFT 5")
 {
     static constexpr int depth = 5;
 
@@ -144,7 +144,7 @@ TEST_CASE("Testing PERFT 5")
     CHECK(perf.getAndResetNodes() == 89941194ull);
 }
 
-TEST_CASE("Testing PERFT 6")
+TEST_CASE("PERFT 6")
 {
     static constexpr int depth = 5;
 
@@ -156,7 +156,7 @@ TEST_CASE("Testing PERFT 6")
     CHECK(perf.getAndResetNodes() == 164075551ull);
 }
 
-TEST_CASE("Testing PERFT 7")
+TEST_CASE("PERFT 7")
 {
     static constexpr int depth = 7;
 
@@ -168,7 +168,7 @@ TEST_CASE("Testing PERFT 7")
     CHECK(perf.getAndResetNodes() == 71441619ull);
 }
 
-// TEST_CASE("Testing PERFT 8")
+// TEST_CASE("PERFT 8")
 // {
 //     static constexpr int depth = 6;
 
@@ -180,7 +180,7 @@ TEST_CASE("Testing PERFT 7")
 //     CHECK(perf.getAndResetNodes() == 2261050076ull);
 // }
 
-TEST_CASE("Testing PERFT 9")
+TEST_CASE("PERFT 9")
 {
     static constexpr int depth = 8;
 
