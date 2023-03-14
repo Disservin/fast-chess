@@ -71,13 +71,13 @@ EngineProcess::~EngineProcess()
     killProcess();
 }
 
-std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, bool &timeout,
-                                                    int64_t timeoutThreshold)
+const std::vector<std::string> &EngineProcess::readProcess(std::string_view last_word,
+                                                           bool &timeout, int64_t timeoutThreshold)
 {
     assert(is_initalized_);
 
-    std::vector<std::string> lines;
-    lines.reserve(30);
+    lines_.clear();
+    lines_.reserve(30);
 
     std::string currentLine;
     currentLine.reserve(300);
@@ -114,7 +114,7 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
                     std::chrono::high_resolution_clock::now() - start)
                     .count() > timeoutThreshold)
             {
-                lines.emplace_back(currentLine);
+                lines_.emplace_back(currentLine);
                 timeout = true;
                 break;
             }
@@ -136,19 +136,19 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
         for (DWORD i = 0; i < bytesRead; i++)
         {
             // If we encounter a newline, add the current line to the vector and reset the
-            // currentLine on windows newlines are \r\n
+            // currentLine on windows newlines_ are \r\n
             if (buffer[i] == '\n' || buffer[i] == '\r')
             {
-                // dont add empty lines
+                // dont add empty lines_
                 if (!currentLine.empty())
                 {
-                    lines.emplace_back(currentLine);
+                    lines_.emplace_back(currentLine);
 
                     Logger::readLog(currentLine, std::this_thread::get_id());
 
                     if (currentLine.rfind(last_word, 0) == 0)
                     {
-                        return lines;
+                        return lines_;
                     }
 
                     currentLine = "";
@@ -162,7 +162,7 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
         }
     }
 
-    return lines;
+    return lines_;
 }
 
 void EngineProcess::writeProcess(const std::string &input)
@@ -326,16 +326,16 @@ void EngineProcess::writeProcess(const std::string &input)
         err_str_ = ss.str();
     }
 }
-std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, bool &timeout,
-                                                    int64_t timeoutThreshold)
+const std::vector<std::string> &EngineProcess::readProcess(std::string_view last_word,
+                                                           bool &timeout, int64_t timeoutThreshold)
 {
     assert(is_initalized_);
 
     // Disable blocking
     fcntl(in_pipe_[0], F_SETFL, fcntl(in_pipe_[0], F_GETFL) | O_NONBLOCK);
 
-    std::vector<std::string> lines;
-    lines.reserve(30);
+    lines_.clear();
+    lines_.reserve(30);
 
     std::string currentLine;
     currentLine.reserve(300);
@@ -354,7 +354,7 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
         timeoutMillis = -1; // wait indefinitely
     }
 
-    // Continue reading output lines until the line matches the specified line or a timeout occurs
+    // Continue reading output lines_ until the line matches the specified line or a timeout occurs
     while (true)
     {
         const int ret = poll(pollfds, 1, timeoutMillis);
@@ -368,7 +368,7 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
         else if (ret == 0)
         {
             // timeout
-            lines.emplace_back(currentLine);
+            lines_.emplace_back(currentLine);
             timeout = true;
             break;
         }
@@ -390,13 +390,13 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
                 // currentLine
                 if (buffer[i] == '\n')
                 {
-                    // dont add empty lines
+                    // dont add empty lines_
                     if (!currentLine.empty())
                     {
-                        lines.emplace_back(currentLine);
+                        lines_.emplace_back(currentLine);
                         if (currentLine.rfind(last_word, 0) == 0)
                         {
-                            return lines;
+                            return lines_;
                         }
                         currentLine = "";
                     }
@@ -410,7 +410,7 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
         }
     }
 
-    return lines;
+    return lines_;
 }
 
 bool EngineProcess::isAlive()
