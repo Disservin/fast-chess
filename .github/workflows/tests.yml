@@ -79,6 +79,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           cd tests
+          make clean
           make -j san=asan CXX=clang++
           ./fast-chess-tests*
 
@@ -86,13 +87,15 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           cd tests
+          make clean
           make -j san=asan CXX=g++
           ./fast-chess-tests* -tce="*PERFT*"
 
-      - name: Running fsanitize=memory unit testss
+      - name: Running fsanitize=memory unit tests
         if: runner.os != 'Windows' && runner.os != 'Macos'
         run: |
           cd tests
+          make clean
           make -j san=memory CXX=clang++
           ./fast-chess-tests* -tce="*PERFT*"
 
@@ -101,6 +104,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           cd tests
+          make clean
           make -j san=undefined CXX=clang++
           ./fast-chess-tests* -tce="*PERFT*"
 
@@ -108,5 +112,6 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           cd tests
+          make clean
           make -j CXX=g++
           valgrind --error-exitcode=1 --errors-for-leak-kinds=all --leak-check=full ./fast-chess-tests* -tce="*PERFT*"
