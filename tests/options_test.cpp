@@ -29,7 +29,7 @@ TEST_CASE("Testing Engine options parsing")
                           "order=random",
                           "plies=16",
                           "-pgnout",
-                          "PGNs/Alexandria-EA649FED_vs_Alexandria-27E42728"};
+                          "file=PGNs/Alexandria-EA649FED_vs_Alexandria-27E42728"};
     CMD::Options options = CMD::Options(22, argv);
 
     auto configs = options.getEngineConfigs();

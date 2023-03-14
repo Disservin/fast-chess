@@ -228,9 +228,8 @@ void EngineProcess::killProcess()
 }
 #else
 
-#include <errno.h>
 #include <fcntl.h> // fcntl
-#include <poll.h>  // poll
+#include <poll.h> // poll
 #include <signal.h>
 #include <string.h>
 #include <sys/types.h> // pid_t
@@ -259,7 +258,7 @@ void EngineProcess::initProcess(const std::string &command)
 
     if (forkPid < 0)
     {
-        perror(strerror(errno));
+        perror("Error: InitProcess");
         exit(1);
     }
 
@@ -284,7 +283,8 @@ void EngineProcess::initProcess(const std::string &command)
         if (execl(command.c_str(), command.c_str(), (char *)NULL) == -1)
             perror("Error: Execute");
 
-        _exit(0); /* Note that we do not use exit() */
+        perror("Error: in child");
+        exit(1);
     }
     else
     {
@@ -314,26 +314,27 @@ void EngineProcess::writeProcess(const std::string &input)
 
     // Append a newline character to the end of the input string
     constexpr char endLine = '\n';
+    Logger::coutInfo("writing process", input);
 
     // Write the input and a newline to the output pipe
     if (write(out_pipe_[1], input.c_str(), input.size()) == -1)
     {
-        perror(strerror(errno));
         std::stringstream ss;
         ss << "Process is not alive and write occured with message: " << input;
         std::cout << ss.str();
         err_code_ = 1;
         err_str_ = ss.str();
+        perror("Error: write: ");
     }
 
     if (write(out_pipe_[1], &endLine, 1) == -1)
     {
-        perror(strerror(errno));
         std::stringstream ss;
         ss << "Process is not alive and write occured with message: " << input;
         std::cout << ss.str();
         err_code_ = 1;
         err_str_ = ss.str();
+        perror("Error: write\n: ");
     }
 }
 std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, bool &timeout,
@@ -371,9 +372,9 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
 
         if (ret == -1)
         {
-            perror(strerror(errno));
             err_code_ = 1;
-            err_str_ = strerror(errno);
+            err_str_ = "Error poll";
+            perror("Error: poll: ");
         }
         else if (ret == 0)
         {
@@ -389,9 +390,9 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
 
             if (bytesRead == -1)
             {
-                perror(strerror(errno));
                 err_code_ = 1;
-                err_str_ = strerror(errno);
+                err_str_ = "Error read";
+                perror("Error: read");
             }
             // Iterate over each character in the buffer
             for (int i = 0; i < bytesRead; i++)
@@ -403,6 +404,8 @@ std::vector<std::string> EngineProcess::readProcess(std::string_view last_word, 
                     // dont add empty lines
                     if (!currentLine.empty())
                     {
+                        Logger::coutInfo("reading process", currentLine);
+
                         lines.emplace_back(currentLine);
                         if (currentLine.rfind(last_word, 0) == 0)
                         {
@@ -431,9 +434,8 @@ bool EngineProcess::isAlive()
     const pid_t r = waitpid(process_pid_, &status, WNOHANG);
     if (r == -1)
     {
-        perror(strerror(errno));
-        err_code_ = 1;
-        err_str_ = strerror(errno);
+        Logger::coutInfo("Warning: isalive failed.");
+        perror("isAlive Error: ");
         return false;
     }
     else

@@ -2,9 +2,9 @@ name: Run tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   Binaries:
@@ -16,59 +16,79 @@ jobs:
     strategy:
       matrix:
         config:
-          - {
-            name: "Ubuntu Unit Tests",
-            os: ubuntu-latest,
-            shell: 'bash {0}'
-          }
-          - {
-            name: "Windows Unit Tests",
-            os: windows-latest,
-            msys_sys: 'mingw64',
-            msys_env: 'x86_64-gcc',
-            shell: 'msys2 {0}',
-          }
-          - name: MacOS 12 Unit Tests
-            os: macos-12
-            compiler: clang++
-            comp: clang
-            shell: bash {0}
+        - {name: "Ubuntu Unit Tests", os: ubuntu-latest, shell: 'bash {0}'}
+        - {name: "Windows Unit Tests", os: windows-latest, msys_sys: 'mingw64', msys_env: 'x86_64-gcc', shell: 'msys2 {0}',}
+        # - name: MacOS 12 Unit Tests
+    #   os: macos-12
+    #   compiler: clang++
+    #   comp: clang
+    #   shell: bash {0}
     defaults:
       run:
         shell: ${{ matrix.config.shell }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Installing required packages
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install g++-multilib
-          g++ --version
+    - uses: actions/checkout@v3
+    - name: Installing required packages
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt install expect valgrind
+        sudo apt-get install clang-12
+        sudo apt install llvm
+        clang++ --version
 
-      - name: Install windows make
-        if: runner.os == 'Windows'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: ${{matrix.config.msys_sys}}
-          install: mingw-w64-${{matrix.config.msys_env}} make git expect
+    - name: Install windows make
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{matrix.config.msys_sys}}
+        install: mingw-w64-${{matrix.config.msys_env}} make git expect
 
-      - name: g++ Version
-        run: |
-          g++ --version
+    - name: Macos clang version
+      if: runner.os == 'Macos'
+      run: |
+        clang++ --version
 
-      - name: Building Fast-Chess
-        if: runner.os != 'Macos'
-        run: |
-          cd tests
-          make NATIVE=-march=core-avx2
+    - name: Running Tests
+      if: runner.os == 'Windows'
+      run: |
+        cd tests
+        g++ --version
+        make -j
+        ./fast-chess-tests*
 
-      - name: Building Fast-Chess
-        if: runner.os == 'Macos'
-        run: |
-          cd tests
-          make -j
+    - name: Running fsanitize=address unit tests with clang++
+      if: runner.os != 'Windows'
+      run: |
+        cd tests
+        make -j san=asan CXX=clang++
+        ./fast-chess-tests*
 
-      - name: Running unit tests
-        run: |
-          cd tests
-          ./fast-chess-tests*
+    - name: Running fsanitize=address unit tests with g++
+      if: runner.os != 'Windows'
+      run: |
+        cd tests
+        make -j san=asan CXX=g++
+        ./fast-chess-tests* -tce="*PERFT*"
+
+    #   if: runner.os != 'Windows' && runner.os != 'Macos'
+    #   run: |
+    #     cd tests
+    #     make -j san=memory CXX=clang++
+    #     ./fast-chess-tests* -tce="*PERFT*"
+
+    - name: Running fsanitize=undefined unit tests
+
+      # - name: Running fsanitize=memory unit testss
+      if: runner.os != 'Windows'
+      run: |
+        cd tests
+        make -j san=undefined CXX=clang++
+        ./fast-chess-tests* -tce="*PERFT*"
+
+    - name: Valgrind
+      if: runner.os == 'Linux'
+      run: |
+        cd tests
+        make -j CXX=g++
+        valgrind --error-exitcode=1 --errors-for-leak-kinds=all --leak-check=full ./fast-chess-tests* -tce="*PERFT*"

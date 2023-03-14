@@ -1,5 +1,5 @@
 CXX      = g++
-CXXFLAGS = -O3 -std=c++17 -g3
+CXXFLAGS = -O2 -std=c++17 -g3 -fno-omit-frame-pointer -Wall -Wextra -MMD -MP
 NATIVE   = -march=x86-64
 SUFFIX   = .exe
 
@@ -22,11 +22,46 @@ ifeq ($(uname_S), Darwin)
 	LDFLAGS = 
 endif
 
+ifeq ($(san), asan)
+	LDFLAGS += -fsanitize=address
+endif
+
+ifeq ($(san), memory)
+	LDFLAGS += -fsanitize=memory -fPIE -pie
+endif
+
+ifeq ($(san), undefined)
+	LDFLAGS += -fsanitize=undefined
+endif
+
+TARGET := fast-chess-tests
+
+# Find all .cpp files in subdirectories and specified directory
 ALL_SOURCES = $(wildcard ../src/*.cpp ../src/chess/*.cpp ../src/engines/*.cpp *.cpp)
-SOURCES = $(filter-out ../src/main.cpp, $(ALL_SOURCES))
+SRCS := $(filter-out ../src/main.cpp, $(ALL_SOURCES))
 
-TARGET = fast-chess-tests$(SUFFIX)
+# Generate .o file names from .cpp file names
+OBJS := $(SRCS:%.cpp=%.o)
 
-all:
-	$(CXX) $(CXXFLAGS) $(NATIVE) ./data/engine/dummy_engine.cpp -o ./data/engine/dummy_engine $(LDFLAGS)
-	$(CXX) $(CXXFLAGS) $(NATIVE) $(SOURCES) -o $(TARGET) $(LDFLAGS)
+# Generate .d file names from .cpp file names
+DEPS := $(SRCS:%.cpp=%.d)
+
+# Default target
+all: $(TARGET)
+
+# Link the .o files to generate the executable
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# Compile the .cpp files to .o files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Include the .d files to avoid unnecessary recompilations
+-include $(DEPS)
+
+# Clean up intermediate files
+clean:
+	rm -f $(OBJS) $(DEPS)
+
+.PHONY: all clean
