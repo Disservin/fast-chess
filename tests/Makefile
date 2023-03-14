@@ -48,7 +48,7 @@ DEPS := $(SRCS:%.cpp=%.d)
 
 # Default target
 all: 
-	$(CXX) $(CXXFLAGS) $(NATIVE) ./data/engine/dummy_engine.cpp -o ./data/engine/dummy_engine $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(NATIVE) ./data/engine/dummy_engine.cpp -o ./data/engine/dummy_engine$(SUFFIX) $(LDFLAGS)
 	$(TARGET)
 
 # Link the .o files to generate the executable
