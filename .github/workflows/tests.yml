@@ -67,22 +67,6 @@ jobs:
         run: |
           clang++ --version
 
-      - name: Running Tests
-        if: runner.os == 'Windows'
-        run: |
-          cd tests
-          g++ --version
-          make -j
-          ./fast-chess-tests*
-
-      - name: Running fsanitize=address unit tests with clang++
-        if: runner.os != 'Windows'
-        run: |
-          cd tests
-          make clean
-          make -j san=asan CXX=clang++
-          ./fast-chess-tests*
-
       - name: Running fsanitize=address unit tests with g++
         if: runner.os != 'Windows'
         run: |
@@ -107,6 +91,22 @@ jobs:
           make clean
           make -j san=undefined CXX=clang++
           ./fast-chess-tests* -tce="*PERFT*"
+
+      - name: Running fsanitize=address unit tests with clang++
+        if: runner.os != 'Windows'
+        run: |
+          cd tests
+          make clean
+          make -j san=asan CXX=clang++
+          ./fast-chess-tests*
+
+      - name: Running Tests
+        if: runner.os == 'Windows'
+        run: |
+          cd tests
+          g++ --version
+          make -j
+          ./fast-chess-tests*
 
       - name: Valgrind
         if: runner.os == 'Linux'
