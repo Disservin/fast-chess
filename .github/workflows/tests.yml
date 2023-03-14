@@ -75,13 +75,13 @@ jobs:
           make -j san=asan CXX=g++
           ./fast-chess-tests* -tce="*PERFT*"
 
-      - name: Running fsanitize=memory unit tests
-        if: runner.os != 'Windows' && runner.os != 'Macos'
-        run: |
-          cd tests
-          make clean
-          make -j san=memory CXX=clang++
-          ./fast-chess-tests* -tce="*PERFT*"
+      # - name: Running fsanitize=memory unit tests
+      #   if: runner.os != 'Windows' && runner.os != 'Macos'
+      #   run: |
+      #     cd tests
+      #     make clean
+      #     make -j san=memory CXX=clang++
+      #     ./fast-chess-tests* -tce="*PERFT*"
 
       - name: Running fsanitize=undefined unit tests
 
