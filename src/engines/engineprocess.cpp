@@ -313,20 +313,10 @@ void EngineProcess::writeProcess(const std::string &input)
     }
 
     // Append a newline character to the end of the input string
-    constexpr char endLine = '\n';
+    auto msg = input + "\n";
 
     // Write the input and a newline to the output pipe
-    if (write(out_pipe_[1], input.c_str(), input.size()) == -1)
-    {
-        perror(strerror(errno));
-        std::stringstream ss;
-        ss << "Process is not alive and write occured with message: " << input;
-        std::cout << ss.str();
-        err_code_ = 1;
-        err_str_ = ss.str();
-    }
-
-    if (write(out_pipe_[1], &endLine, 1) == -1)
+    if (write(out_pipe_[1], msg.c_str(), msg.size()) == -1)
     {
         perror(strerror(errno));
         std::stringstream ss;
