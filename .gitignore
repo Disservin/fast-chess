@@ -11,3 +11,4 @@ dummy_engine*
 src/x64/*
 *.txt
 *.json
+*/Debug/*

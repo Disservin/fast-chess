@@ -36,7 +36,6 @@ class ThreadPool
                         task = std::move(this->tasks_.front());
                         this->tasks_.pop();
                     }
-
                     task();
                 }
             });

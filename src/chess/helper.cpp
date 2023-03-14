@@ -20,8 +20,7 @@ Square msb(Bitboard b)
 }
 
 #elif defined(_MSC_VER)
-
-#ifdef _WIN64 // MSVC, WIN64
+#ifdef _WIN32 // MSVC, WIN64
 #include <intrin.h>
 Square lsb(Bitboard b)
 {
