@@ -320,7 +320,7 @@ void EngineProcess::writeProcess(const std::string &input)
     {
         perror(strerror(errno));
         std::stringstream ss;
-        ss << "Process is not alive and write occured with message: " << input;
+        ss << "Process is not alive and write occured with message: " << msg;
         std::cout << ss.str();
         err_code_ = 1;
         err_str_ = ss.str();
