@@ -43,7 +43,7 @@ PgnBuilder::PgnBuilder(const Match &match, const CMD::GameManagerOptions &game_o
                     << match.moves[match.moves.size() - 1].move;
     }
 
-    Board b = Board(match.fen);
+    auto b = std::make_unique<Board>(match.fen);
 
     int move_count = 3;
     for (size_t i = 0; i < match.moves.size(); i++)
@@ -59,7 +59,7 @@ PgnBuilder::PgnBuilder(const Match &match, const CMD::GameManagerOptions &game_o
         }
 
         const std::string move =
-            MoveToRep(b, convertUciToMove(b, data.move), game_options_.pgn.notation != "san");
+            MoveToRep(*b, convertUciToMove(*b, data.move), game_options_.pgn.notation != "san");
 
         if (move_count % 2 != 0)
             ss << move_count / 2 << "."
@@ -84,7 +84,7 @@ PgnBuilder::PgnBuilder(const Match &match, const CMD::GameManagerOptions &game_o
             break;
         }
 
-        b.makeMove(convertUciToMove(b, data.move));
+        b->makeMove(convertUciToMove(*b, data.move));
 
         move_count++;
     }

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <utility>
 #include <vector>
+#include <string_view>
 
 #include "chess/board.hpp"
 #include "engines/engine_config.hpp"

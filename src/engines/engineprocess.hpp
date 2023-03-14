@@ -5,7 +5,6 @@
 #include <vector>
 
 #ifdef _WIN64
-#include <iostream>
 #include <windows.h>
 #endif
 
@@ -16,8 +15,8 @@ class Process
 {
   public:
     // Read engine's stdout until the line matches last_word or timeout is reached
-    virtual std::vector<std::string> readProcess(std::string_view last_word, bool &timeout,
-                                                 int64_t timeoutThreshold = 1000) = 0;
+    virtual const std::vector<std::string> &readProcess(std::string_view last_word, bool &timeout,
+                                                        int64_t timeoutThreshold = 1000) = 0;
     // Write input to the engine's stdin
     virtual void writeProcess(const std::string &input) = 0;
 
@@ -41,6 +40,8 @@ class Process
         err_code_ = 0;
         err_str_ = "";
     }
+
+    std::vector<std::string> lines_;
 };
 
 #ifdef _WIN64
@@ -62,8 +63,8 @@ class EngineProcess : public Process
 
     virtual bool isAlive() override;
 
-    virtual std::vector<std::string> readProcess(std::string_view last_word, bool &timeout,
-                                                 int64_t timeoutThreshold = 1000) override;
+    virtual const std::vector<std::string> &readProcess(std::string_view last_word, bool &timeout,
+                                                        int64_t timeoutThreshold = 1000) override;
     virtual void writeProcess(const std::string &input) override;
 
   private:
@@ -89,8 +90,8 @@ class EngineProcess : public Process
 
     virtual bool isAlive() override;
 
-    virtual std::vector<std::string> readProcess(std::string_view last_word, bool &timeout,
-                                                 int64_t timeoutThreshold = 1000) override;
+    virtual const std::vector<std::string> &readProcess(std::string_view last_word, bool &timeout,
+                                                        int64_t timeoutThreshold = 1000) override;
     virtual void writeProcess(const std::string &input) override;
 
   private:

@@ -32,7 +32,7 @@ struct Match
     std::vector<MoveData> moves;
     EngineConfiguration white_engine;
     EngineConfiguration black_engine;
-    GameResult result;
+    GameResult result = GameResult::NONE;
     std::string termination;
     std::string start_time;
     std::string end_time;
