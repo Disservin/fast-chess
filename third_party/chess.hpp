@@ -25,7 +25,7 @@ THIS FILE IS AUTO GENERATED DO NOT CHANGE MANUALLY.
 
 Source: https://github.com/Disservin/chess-library
 
-VERSION: 0.6.47
+VERSION: 0.6.48
 */
 
 #ifndef CHESS_HPP
@@ -1872,6 +1872,7 @@ class Board {
         return ss;
     }
 
+    template <bool EXACT = false>
     void makeMove(const Move move) {
         const auto capture  = at(move.to()) != Piece::NONE && move.typeOf() != Move::CASTLING;
         const auto captured = at(move.to());
@@ -1925,11 +1926,30 @@ class Board {
             if (Square::value_distance(move.to(), move.from()) == 16) {
                 Bitboard ep_mask = attacks::pawn(stm_, move.to().ep_square());
 
+                static constexpr auto is_legal = [](const Board &board, Move move) {
+                    static Movelist moves;
+                    movegen::legalmoves(moves, board);
+
+                    return std::find(moves.begin(), moves.end(), move) != moves.end();
+                };
+
                 // add enpassant hash if enemy pawns are attacking the square
                 if (static_cast<bool>(ep_mask & pieces(PieceType::PAWN, ~stm_))) {
-                    assert(at(move.to().ep_square()) == Piece::NONE);
-                    ep_sq_ = move.to().ep_square();
-                    key_ ^= Zobrist::enpassant(move.to().ep_square().file());
+                    if constexpr (EXACT) {
+                        while (ep_mask) {
+                            const auto possible_move = Move::make(ep_mask.pop(), move.to().ep_square());
+                            if (is_legal(*this, possible_move)) {
+                                assert(at(move.to().ep_square()) == Piece::NONE);
+                                ep_sq_ = move.to().ep_square();
+                                key_ ^= Zobrist::enpassant(move.to().ep_square().file());
+                                break;
+                            }
+                        }
+                    } else {
+                        assert(at(move.to().ep_square()) == Piece::NONE);
+                        ep_sq_ = move.to().ep_square();
+                        key_ ^= Zobrist::enpassant(move.to().ep_square().file());
+                    }
                 }
             }
         }
