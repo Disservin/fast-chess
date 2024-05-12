@@ -73,7 +73,7 @@ void Match::prepare() {
 
     const auto insert_move = [&](const auto& opening_move) {
         const auto move = uci::moveToUci(opening_move, board_.chess960());
-        board_.makeMove(opening_move);
+        board_.makeMove<true>(opening_move);
 
         return MoveData(move, "0.00", 0, 0, 0, 0, 0, true, true);
     };
@@ -237,7 +237,7 @@ bool Match::playMove(Player& us, Player& opponent) {
     resign_tracker_.update(us.engine.lastScore(), us.engine.lastScoreType());
     maxmoves_tracker_.update();
 
-    board_.makeMove(move);
+    board_.makeMove<true>(move);
 
     draw_tracker_.update(us.engine.lastScore(), board_.fullMoveNumber(), us.engine.lastScoreType(), 
                          board_.halfMoveClock());
@@ -288,7 +288,7 @@ void Match::verifyPvLines(const Player& us) {
                 Logger::log<Logger::Level::WARN>("Warning; Illegal pv move ", token, "pv:", info);
             }
 
-            tmp.makeMove(uci::uciToMove(tmp, token));
+            tmp.makeMove<true>(uci::uciToMove(tmp, token));
         });
     };
 
