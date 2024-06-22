@@ -190,6 +190,29 @@ bool Match::playMove(Player& us, Player& them) {
 
     us.engine.writeLog();
 
+    if (status == engine::process::Status::TIMEOUT) {
+        us.setLost();
+        them.setWon();
+
+        data_.termination = MatchTermination::TIMEOUT;
+        data_.reason      = name + Match::TIMEOUT_MSG;
+
+        Logger::warn<true>("Warning; Engine {} loses on time", name);
+
+        // we send a stop command to the engine to prevent it from thinking
+        // and wait for a bestmove to appear
+
+        us.engine.writeEngine("stop");
+
+        if (!us.engine.outputIncludesBestmove()) {
+            // wait for bestmove, indefinitely
+            // is this a good idea? what if the engine is stuck?
+            us.engine.readEngine("bestmove", 0ms);
+        }
+
+        return false;
+    }
+
     if (status == engine::process::Status::ERR || !us.engine.isResponsive()) {
         setEngineCrashStatus(us, them);
         return false;
