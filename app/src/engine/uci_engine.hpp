@@ -54,6 +54,8 @@ class UciEngine : protected process::Process {
 
     [[nodiscard]] bool go(const TimeControl &our_tc, const TimeControl &enemy_tc, chess::Color stm);
 
+    std::string positionString();
+    std::string goString();
     void quit();
 
     // Writes the input to the engine. Appends a newline to the input.
@@ -109,6 +111,8 @@ class UciEngine : protected process::Process {
     UCIOptions uci_options_;
     std::vector<process::Line> output_;
     EngineConfiguration config_;
+    std::string position_string_;
+    std::string go_string_;
 
     // init on first use
     bool initialized_ = false;
