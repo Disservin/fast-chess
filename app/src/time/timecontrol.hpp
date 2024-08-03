@@ -25,10 +25,11 @@ class TimeControl {
         int64_t moves = 0;
 
         int64_t timemargin = 0;
+        uint64_t overhead  = 0;
 
         bool operator==(const Limits &rhs) const {
-            return std::tie(increment, fixed_time, time, moves, timemargin) ==
-                   std::tie(rhs.increment, rhs.fixed_time, rhs.time, rhs.moves, rhs.timemargin);
+            return std::tie(increment, fixed_time, time, moves, timemargin, overhead) ==
+                   std::tie(rhs.increment, rhs.fixed_time, rhs.time, rhs.moves, rhs.timemargin, rhs.overhead);
         }
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE_ORDERED_JSON(Limits, increment, fixed_time, time, moves, timemargin)
@@ -45,12 +46,14 @@ class TimeControl {
     [[nodiscard]] int64_t getMovesLeft() const { return moves_left_; }
     [[nodiscard]] int64_t getFixedTime() const { return limits_.fixed_time; }
     [[nodiscard]] int64_t getIncrement() const { return limits_.increment; }
+    [[nodiscard]] uint64_t getOverhead() const { return limits_.overhead; }
 
     void setMoves(int64_t moves) { limits_.moves = moves; }
     void setIncrement(int64_t inc) { limits_.increment = inc; }
     void setTime(int64_t time) { limits_.time = time; }
     void setFixedTime(int64_t fixed_time) { limits_.fixed_time = fixed_time; }
     void setTimemargin(int64_t timemargin) { limits_.timemargin = timemargin; }
+    void setOverhead(uint64_t overhead) { limits_.overhead = overhead; }
 
     [[nodiscard]] bool isFixedTime() const noexcept { return limits_.fixed_time != 0; }
     [[nodiscard]] bool isTimed() const noexcept { return limits_.time != 0; }

@@ -117,11 +117,13 @@ bool UciEngine::go(const TimeControl &our_tc, const TimeControl &enemy_tc, chess
 
     if (our_tc.isTimed() || our_tc.isIncrement()) {
         if (white.isTimed() || white.isIncrement()) {
-            input << " wtime " << white.getTimeLeft();
+            int64_t reported_time = white.getTimeLeft() - white.getOverhead();
+            input << " wtime " << (reported_time < 1 ? 1 : reported_time);
         }
 
         if (black.isTimed() || black.isIncrement()) {
-            input << " btime " << black.getTimeLeft();
+            int64_t reported_time = black.getTimeLeft() - black.getOverhead();
+            input << " btime " << (reported_time < 1 ? 1 : reported_time);
         }
     }
 

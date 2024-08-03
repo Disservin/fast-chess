@@ -132,6 +132,8 @@ void parseEngineKeyValues(EngineConfiguration &engineConfig, const std::string &
         engineConfig.limit.tc = parseTc(value);
     else if (key == "st")
         engineConfig.limit.tc.fixed_time = static_cast<int64_t>(std::stod(value) * 1000);
+    else if (key == "overhead")
+        engineConfig.limit.tc.overhead = std::stoull(value);
     else if (key == "timemargin") {
         engineConfig.limit.tc.timemargin = std::stoi(value);
         if (engineConfig.limit.tc.timemargin < 0) {

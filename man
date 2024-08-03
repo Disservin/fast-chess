@@ -203,6 +203,10 @@ OPTIONS
                 Allows the engine to exceed the time limit by N milliseconds.
                 Default value is 0.
 
+            [overhead=N]
+                Reduces the time reported to the engine by N milliseconds to compensate for overhead.
+                Default value is 0.
+
             [st=ST]
                 Movetime for the engine in seconds.
             
