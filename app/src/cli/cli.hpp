@@ -72,6 +72,10 @@ class OptionsParser {
 
         ss << "fastchess " << version;
 
+#ifdef COMPILE_MSG
+        ss << COMPILE_MSG << " ";
+#endif
+
 #ifndef RELEASE
 #    ifdef GIT_DATE
         ss << GIT_DATE;

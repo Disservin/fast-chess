@@ -65,11 +65,15 @@ jobs:
         run: |
           git rev-parse --short "$GITHUB_SHA" > sha && echo "git_sha=$(cat sha)" >> $GITHUB_ENV && echo "Git sha:" $(cat sha)
 
+      - name: Get commit date
+        id: commit_date
+        run: echo "COMMIT_DATE=$(git show -s --date=format:'%Y%m%d' --format=%cd HEAD)" >> $GITHUB_ENV
+
       # Compiles
 
       - name: Building fastchess
         run: |
-          make -j2 build=release
+          make -j2 build=release COMPILE_MSG="compiled for ${{ matrix.config.os }} ${{ env.COMMIT_DATE }}-${{ env.COMMIT_SHA }} (CI)"
           strip ./fastchess$EXT
           mv fastchess$EXT fastchess-$OS$EXT
           ./fastchess* -version
