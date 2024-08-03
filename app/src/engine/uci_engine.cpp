@@ -329,8 +329,7 @@ std::vector<std::string> UciEngine::lastInfo() const {
 
     if (last_info.empty()) {
         Logger::warn<true>(
-            "Warning; No info line found in the last line which includes the "
-            "score from {}",
+            "Warning; Last info string with score not found from {}",
             config_.name);
         return {};
     }
