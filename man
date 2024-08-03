@@ -115,7 +115,10 @@ OPTIONS
             Export the final position of each game in EPD format.
 
         -noswap
-            If specified, prevents swapping of colors. The first engine listed will always play as white.
+            If specified, prevents swapping of colors.
+
+        -reverse
+            If specified, uses tournament schedule with reversed colors.
 
         -ratinginterval N
             Set the rating interval for the rating report. For penta reports,

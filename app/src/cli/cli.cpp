@@ -476,6 +476,10 @@ void parseNoswap(const std::vector<std::string> &, ArgumentData &argument_data) 
     argument_data.tournament_config.noswap = true;
 }
 
+void parseReverse(const std::vector<std::string> &, ArgumentData &argument_data) {
+    argument_data.tournament_config.reverse = true;
+}
+
 void parseRatinginterval(const std::vector<std::string> &params, ArgumentData &argument_data) {
     parseValue(params, argument_data.tournament_config.ratinginterval);
 }
@@ -605,6 +609,7 @@ OptionsParser::OptionsParser(int argc, char const *argv[]) {
     addOption("games", parseGames);
     addOption("rounds", parseRounds);
     addOption("noswap", parseNoswap);
+    addOption("reverse", parseReverse);
     addOption("ratinginterval", parseRatinginterval);
     addOption("scoreinterval", parseScoreinterval);
     addOption("srand", parseSRand);

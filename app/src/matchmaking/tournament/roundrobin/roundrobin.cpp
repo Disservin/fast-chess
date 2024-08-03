@@ -59,6 +59,10 @@ void RoundRobin::create() {
             std::swap(configs.white, configs.black);
         }
 
+        if (config::TournamentConfig.get().reverse) {
+            std::swap(configs.white, configs.black);
+        }
+
         // callback functions, do not capture by reference
         const auto start = [this, configs, game_id]() { output_->startGame(configs, game_id, total_); };
 
