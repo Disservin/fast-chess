@@ -101,6 +101,8 @@ void RoundRobin::create() {
         };
 
         playGame(configs, start, finish, opening, round_id, game_id);
+        if (config::TournamentConfig.get().wait > 0)
+            std::this_thread::sleep_for(std::chrono::milliseconds(config::TournamentConfig.get().wait));
     };
 
     for (std::size_t i = 0; i < config::EngineConfigs.get().size(); i++) {

@@ -57,6 +57,7 @@ struct Tournament {
 
     int concurrency = 1;
     int overhead    = 0;
+    uint32_t wait   = 0;
 
     bool noswap   = false;
     bool recover  = false;
@@ -65,7 +66,7 @@ struct Tournament {
     Log log = {};
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_ORDERED_JSON(Tournament, resign, draw, maxmoves, opening, pgn, epd, sprt,
-                                                config_name, output, seed, variant, ratinginterval, scoreinterval,
+                                                config_name, output, seed, variant, ratinginterval, scoreinterval, wait,
                                                 autosaveinterval, games, rounds, concurrency, overhead, recover, noswap,
                                                 report_penta, affinity, log)
 

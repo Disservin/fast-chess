@@ -114,6 +114,9 @@ OPTIONS
         -epdout file=NAME
             Export the final position of each game in EPD format.
 
+        -wait N
+            Wait N milliseconds between games. Default value is 0.
+
         -noswap
             If specified, prevents swapping of colors. The first engine listed will always play as white.
 
