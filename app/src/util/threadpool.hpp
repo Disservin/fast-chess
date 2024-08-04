@@ -39,9 +39,6 @@ class ThreadPool {
 
         if (num_threads == workers_.size()) return;
 
-        //  don't go over the number of threads the system has
-        num_threads = std::min(num_threads, static_cast<std::size_t>(std::thread::hardware_concurrency()));
-
         kill();
 
         stop_ = false;

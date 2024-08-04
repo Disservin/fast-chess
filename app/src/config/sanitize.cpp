@@ -50,7 +50,9 @@ void sanitize(config::Tournament& config) {
         }
     }
 
-    config.concurrency = std::min(config.concurrency, static_cast<int>(std::thread::hardware_concurrency()));
+    if (config.concurrency > static_cast<int>(std::thread::hardware_concurrency()) && !config.force) {
+        throw std::runtime_error("Error: Concurrency exceeds number of CPUs. Use -force to override.");
+    }
 
     if (config.variant == VariantType::FRC && config.opening.file.empty()) {
         throw std::runtime_error("Error: Please specify a Chess960 opening book");

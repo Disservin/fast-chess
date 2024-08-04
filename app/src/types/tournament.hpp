@@ -56,6 +56,7 @@ struct Tournament {
     int scoreinterval = 1;
 
     int concurrency = 1;
+    bool force      = false;
     int overhead    = 0;
 
     bool noswap   = false;
