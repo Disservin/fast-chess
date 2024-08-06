@@ -186,8 +186,12 @@ bool Match::playMove(Player& us, Player& them) {
         return false;
     }
 
-    // disconnect
-    if (!us.engine.isready()) {
+    // connection stalls
+    auto is_ready = us.engine.isready();
+    if (is_ready == engine::process::Status::TIMEOUT) {
+        setEngineStallStatus(us, them);
+        return false;
+    } else if (is_ready != engine::process::Status::OK) {
         setEngineCrashStatus(us, them);
         return false;
     }
@@ -200,7 +204,11 @@ bool Match::playMove(Player& us, Player& them) {
     }
 
     // wait for readyok
-    if (!us.engine.isready()) {
+    is_ready = us.engine.isready();
+    if (is_ready == engine::process::Status::TIMEOUT) {
+        setEngineStallStatus(us, them);
+        return false;
+    } else if (is_ready != engine::process::Status::OK) {
         setEngineCrashStatus(us, them);
         return false;
     }
@@ -233,7 +241,16 @@ bool Match::playMove(Player& us, Player& them) {
 
     Logger::trace<true>("Check if engine {} is in a ready state", name);
 
-    if (status == engine::process::Status::ERR || !us.engine.isready()) {
+    if (status == engine::process::Status::ERR) {
+        setEngineCrashStatus(us, them);
+        return false;
+    }
+
+    is_ready = us.engine.isready();
+    if (is_ready == engine::process::Status::TIMEOUT) {
+        setEngineStallStatus(us, them);
+        return false;
+    } else if (is_ready != engine::process::Status::OK) {
         setEngineCrashStatus(us, them);
         return false;
     }
@@ -320,7 +337,7 @@ void Match::setEngineCrashStatus(Player& loser, Player& winner) {
     loser.setLost();
     winner.setWon();
 
-    crash_or_disconnect_ = true;
+    stall_or_disconnect_ = true;
 
     const auto name  = loser.engine.getConfig().name;
     const auto color = getColorString();
@@ -329,6 +346,21 @@ void Match::setEngineCrashStatus(Player& loser, Player& winner) {
     data_.reason      = color + Match::DISCONNECT_MSG;
 
     Logger::warn<true>("Warning; Engine {} disconnects", name);
+}
+
+void Match::setEngineStallStatus(Player& loser, Player& winner) {
+    loser.setLost();
+    winner.setWon();
+
+    stall_or_disconnect_ = true;
+
+    const auto name  = loser.engine.getConfig().name;
+    const auto color = getColorString();
+
+    data_.termination = MatchTermination::STALL;
+    data_.reason      = color + Match::STALL_MSG;
+
+    Logger::warn<true>("Warning; Engine {}'s connection stalls", name);
 }
 
 void Match::setEngineTimeoutStatus(Player& loser, Player& winner) {

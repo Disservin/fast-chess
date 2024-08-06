@@ -38,6 +38,12 @@ if grep -q "disconnects" $OUTPUT_FILE; then
     exit 1
 fi
 
+# If the output contains "stalls" then fail
+if grep -q "stalls" $OUTPUT_FILE; then
+    echo "Stall detected."
+    exit 1
+fi
+
 # If the output contains "loses on time" then fail
 if grep -q "loses on time" $OUTPUT_FILE; then
     echo "Loses on time detected."
@@ -65,6 +71,12 @@ fi
 # If the output contains "disconnects" then fail
 if grep -q "disconnects" $OUTPUT_FILE_2; then
     echo "Disconnect detected."
+    exit 1
+fi
+
+# If the output contains "stalls" then fail
+if grep -q "stalls" $OUTPUT_FILE_2; then
+    echo "Stall detected."
     exit 1
 fi
 
@@ -107,6 +119,12 @@ fi
 # If the output contains "disconnects" then fail
 if grep -q "disconnects" $OUTPUT_FILE_3; then
     echo "Disconnect detected."
+    exit 1
+fi
+
+# If the output contains "stalls" then fail
+if grep -q "stalls" $OUTPUT_FILE_3; then
+    echo "Stall detected."
     exit 1
 fi
 

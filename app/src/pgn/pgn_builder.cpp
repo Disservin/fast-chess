@@ -172,6 +172,8 @@ std::string PgnBuilder::convertMatchTermination(const MatchTermination &res) noe
             return "adjudication";
         case MatchTermination::DISCONNECT:
             return "abandoned";
+        case MatchTermination::STALL:
+            return "abandoned";
         case MatchTermination::TIMEOUT:
             return "time forfeit";
         case MatchTermination::ILLEGAL_MOVE:

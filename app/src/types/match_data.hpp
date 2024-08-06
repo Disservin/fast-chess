@@ -45,6 +45,7 @@ enum class MatchTermination {
     ADJUDICATION,
     TIMEOUT,
     DISCONNECT,
+    STALL,
     ILLEGAL_MOVE,
     INTERRUPT,
     None,

@@ -48,7 +48,7 @@ class UciEngine : protected process::Process {
     [[nodiscard]] bool ucinewgame();
 
     // Sends "isready" to the engine
-    [[nodiscard]] bool isready(std::chrono::milliseconds threshold = ping_time_);
+    [[nodiscard]] process::Status isready(std::chrono::milliseconds threshold = ping_time_);
 
     // Sends "position" to the engine and waits for a response.
     [[nodiscard]] bool position(const std::vector<std::string> &moves, const std::string &fen);
