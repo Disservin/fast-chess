@@ -1,4 +1,5 @@
 #include <core/config/config.hpp>
+#include <core/globals/globals.hpp>
 #include <engine/uci_engine.hpp>
 #include <types/engine_config.hpp>
 
@@ -8,11 +9,25 @@
 #include <thread>
 #include <vector>
 
+#ifndef _WIN64
+#    include <signal.h>
+#endif
+
 #include <doctest/doctest.hpp>
 
 using namespace fastchess;
 
 namespace {
+
+#ifndef _WIN64
+TEST_CASE("Ignoring SIGPIPE allows broken engine pipes to be handled") {
+    setCtrlCHandler();
+
+    struct sigaction action {};
+    REQUIRE(sigaction(SIGPIPE, nullptr, &action) == 0);
+    CHECK(action.sa_handler == SIG_IGN);
+}
+#endif
 
 #ifdef _WIN64
 const std::string_view path = "./app/tests/mock/engine/dummy_engine.exe";

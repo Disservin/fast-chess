@@ -96,6 +96,12 @@ void setCtrlCHandler() {
 
     memset(&sa, 0, sizeof(sa));
 
+    // Let pipe writes report EPIPE so engine failures can be handled normally.
+    sa.sa_handler = SIG_IGN;
+    if (sigaction(SIGPIPE, &sa, NULL) == -1) {
+        perror("Error ignoring SIGPIPE");
+    }
+
     sa.sa_sigaction = handler;
     sa.sa_flags     = SA_SIGINFO;
 
