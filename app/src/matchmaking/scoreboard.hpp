@@ -155,6 +155,15 @@ class ScoreBoard {
         return stats1 + ~stats2;
     }
 
+    [[nodiscard]] Stats getStatsVsOpponent(const std::string& engine, const std::string& opponent) {
+        std::lock_guard<std::mutex> lock(results_mutex_);
+
+        const auto stats_vs_opponent = results_[{engine, opponent}];
+        const auto opponent_vs_engine = results_[{opponent, engine}];
+
+        return stats_vs_opponent + ~opponent_vs_engine;
+    }
+
     [[nodiscard]] Stats getAllStats(const std::string& engine) {
         std::lock_guard<std::mutex> lock(results_mutex_);
 

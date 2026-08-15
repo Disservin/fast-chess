@@ -56,6 +56,23 @@ TEST_SUITE("ScoreBoard") {
         CHECK(scoreboard.getStats(engine2.name, engine1.name) == Stats(3, 3, 6));
     }
 
+    TEST_CASE("Get stats for a specific opponent") {
+        EngineConfiguration engine1 = {};
+        EngineConfiguration engine2 = {};
+        EngineConfiguration engine3 = {};
+
+        engine1.name = "engine1";
+        engine2.name = "engine2";
+        engine3.name = "engine3";
+
+        ScoreBoard scoreboard;
+        scoreboard.updateNonPair({engine1, engine2}, Stats(1, 0, 0));
+        scoreboard.updateNonPair({engine1, engine3}, Stats(0, 1, 0));
+
+        CHECK(scoreboard.getStatsVsOpponent(engine1.name, engine2.name) == Stats(1, 0, 0));
+        CHECK(scoreboard.getStatsVsOpponent(engine1.name, engine3.name) == Stats(0, 1, 0));
+    }
+
     TEST_CASE("Update with black-to-move opening records assignment perspective") {
         EngineConfiguration engine1 = {};
         EngineConfiguration engine2 = {};

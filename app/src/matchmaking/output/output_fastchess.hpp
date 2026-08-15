@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 
+#include <core/config/config.hpp>
 #include <core/logger/logger.hpp>
 #include <engine/uci_engine.hpp>
 #include <matchmaking/elo/elo_pentanomial.hpp>
@@ -39,11 +40,16 @@ class Fastchess : public IOutput {
             return printEloH2H(stats, first, second, engines, book);
         }
 
+        const bool is_gauntlet = config::TournamentConfig && config::TournamentConfig->type == TournamentType::GAUNTLET &&
+                                 !ecs.empty();
+        const std::string base_engine = is_gauntlet ? ecs.front().name : "";
+
         std::vector<std::tuple<const EngineConfiguration*, std::unique_ptr<elo::EloBase>, Stats>> elos;
 
         for (auto& e : ecs) {
-            const auto stats = scoreboard.getAllStats(e.name);
-            elos.emplace_back(&e, createElo(stats, report_penta_), stats);
+            const auto engine_stats = is_gauntlet && e.name != base_engine ? scoreboard.getStatsVsOpponent(e.name, base_engine)
+                                                                          : scoreboard.getAllStats(e.name);
+            elos.emplace_back(&e, createElo(engine_stats, report_penta_), engine_stats);
         }
 
         // sort by elo diff
