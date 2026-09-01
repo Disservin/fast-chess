@@ -41,7 +41,7 @@ T parseScalar(std::string_view value) {
         try {
             if constexpr (std::is_floating_point_v<T>) {
                 std::size_t parsed_length = 0;
-                const auto parsed = std::stold(str, &parsed_length);
+                const auto parsed         = std::stold(str, &parsed_length);
                 if (parsed_length != str.size() || !std::isfinite(parsed) ||
                     parsed < std::numeric_limits<T>::lowest() || parsed > std::numeric_limits<T>::max()) {
                     throw fastchess::fastchess_exception::format("Invalid numeric value: \"{}\"", str);
@@ -77,14 +77,15 @@ int64_t parseDuration(std::string_view value, int64_t multiplier) {
         value.remove_suffix(1);
     }
 
-    const auto duration = parseScalar<double>(value);
+    const auto duration = parseScalar<long double>(value);
     const auto scaled   = static_cast<long double>(duration) * multiplier;
+    const auto rounded  = std::round(scaled);
 
-    if (duration < 0 || scaled > std::numeric_limits<int64_t>::max()) {
+    if (duration < 0 || rounded > std::numeric_limits<int64_t>::max()) {
         throw fastchess::fastchess_exception::format("Invalid time control duration: \"{}\"", value);
     }
 
-    return static_cast<int64_t>(scaled);
+    return static_cast<int64_t>(rounded);
 }
 
 // Parse a list of integers on the form 5,10,13-17,23 -> 5,10,13,14,15,16,17,23

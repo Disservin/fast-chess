@@ -209,6 +209,13 @@ TEST_SUITE("Option Parsing Tests") {
         CHECK(increment_tc.increment == 2);
     }
 
+    TEST_CASE("Time controls should round fractional seconds to milliseconds") {
+        const auto tc = cli::OptionsParser{engineArgsWithTc("60+0.6")}.getEngineConfigs().front().limit.tc;
+
+        CHECK(tc.time == 60000);
+        CHECK(tc.increment == 600);
+    }
+
     TEST_CASE("Numeric options should reject trailing characters and invalid ranges") {
         CHECK_THROWS_AS(cli::OptionsParser{baseArgs({"-rounds", "10junk"})}, fastchess_exception);
         CHECK_THROWS_AS(cli::OptionsParser{baseArgs({"-srand", "-1"})}, fastchess_exception);
