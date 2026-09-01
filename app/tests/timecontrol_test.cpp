@@ -31,6 +31,18 @@ TEST_SUITE("TimeControl") {
         CHECK(tc.getMovesLeft() == 2);
     }
 
+    TEST_CASE("Period time is not credited before timeout check") {
+        TimeControl::Limits limits;
+        limits.moves      = 1;
+        limits.time       = 2000;
+        limits.timemargin = 100;
+
+        TimeControl tc(limits);
+
+        CHECK(tc.updateTime(2101) == false);
+        CHECK(tc.getTimeLeft() == -101);
+    }
+
     TEST_CASE("Fixed time") {
         TimeControl::Limits limits;
         limits.fixed_time = 5000;

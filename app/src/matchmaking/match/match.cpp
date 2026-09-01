@@ -445,6 +445,11 @@ bool Match::playMove(Player& us, Player& them) {
         return false;
     }
 
+    if (us.hasTimeControl() && us.getTimeControl().getTimeLeft() <= 0) {
+        setEngineTimeoutStatus(us, them, std::nullopt, 0, false);
+        return false;
+    }
+
     // make sure adjudicate is placed after normal termination as it has lower priority
     if (adjudicate(them, us)) {
         return false;
@@ -635,7 +640,7 @@ void Match::setEngineStallStatus(Player& loser, Player& winner) {
 }
 
 void Match::setEngineTimeoutStatus(Player& loser, Player& winner, const std::optional<std::string>& best_move,
-                                   int64_t overrun_ms) {
+                                   int64_t overrun_ms, bool engine_started) {
     loser.setLost();
     winner.setWon();
 
@@ -649,6 +654,8 @@ void Match::setEngineTimeoutStatus(Player& loser, Player& winner, const std::opt
 
     // we send a stop command to the engine to prevent it from thinking
     // and wait for a bestmove to appear
+
+    if (!engine_started) return;
 
     loser.engine.writeEngine("stop");
 

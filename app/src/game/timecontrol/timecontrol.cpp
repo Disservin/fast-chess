@@ -29,10 +29,12 @@ std::chrono::milliseconds TimeControl::getTimeoutThreshold() const noexcept {
 }
 
 bool TimeControl::updateTime(const int64_t elapsed_millis) noexcept {
+    bool completed_period = false;
+
     if (limits_.moves > 0) {
         if (moves_left_ == 1) {
             moves_left_ = limits_.moves;
-            time_left_ += limits_.time;
+            completed_period = true;
         } else {
             moves_left_--;
         }
@@ -53,6 +55,8 @@ bool TimeControl::updateTime(const int64_t elapsed_millis) noexcept {
     }
 
     time_left_ += limits_.increment;
+
+    if (completed_period) time_left_ += limits_.time;
 
     if (limits_.fixed_time != 0) time_left_ = limits_.fixed_time;
 
