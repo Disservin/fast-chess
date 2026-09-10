@@ -7,7 +7,6 @@
 
 #include <types/exception.hpp>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 
 namespace fastchess {

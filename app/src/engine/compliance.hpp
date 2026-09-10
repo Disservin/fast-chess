@@ -9,7 +9,6 @@
 #include <core/config/config.hpp>
 #include <engine/uci_engine.hpp>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 
 namespace fastchess::engine {

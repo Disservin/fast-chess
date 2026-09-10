@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <string>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 
 namespace fastchess {

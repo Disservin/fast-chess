@@ -2,7 +2,6 @@
 
 #include <iostream>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 
 #ifdef _WIN64

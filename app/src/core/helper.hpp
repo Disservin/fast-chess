@@ -11,7 +11,6 @@
 #include <type_traits>
 #include <vector>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 #include <expected.hpp>
 #include <json.hpp>

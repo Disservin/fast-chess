@@ -11,7 +11,6 @@
 #include <core/globals/globals.hpp>
 #include <core/time/time.hpp>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 #include "fmt/include/fmt/std.h"
 
