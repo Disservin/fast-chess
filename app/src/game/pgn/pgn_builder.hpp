@@ -12,7 +12,6 @@
 #include <game/pgn/openings_data.hpp>
 #include <game/pgn/pgn_gen.hpp>
 
-#define FMT_HEADER_ONLY
 #include <fmt/include/fmt/core.h>
 
 namespace fastchess::pgn {

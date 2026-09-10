@@ -17,7 +17,7 @@ DUMMY_ENGINE      = $(TESTDIR)/mock/engine/dummy_engine$(SUFFIX)
 CXXFLAGS         := -O3 -std=c++17 -Wall -Wextra -DNDEBUG
 CXXFLAGS_TEST    := -O0 -std=c++17 -Wall -Wextra -pedantic -Wuninitialized -fno-omit-frame-pointer
 CXXFLAGS_COV     := -O0 --coverage -g -std=c++17 -Wall -Wextra -pedantic -Wuninitialized -g3 -fno-omit-frame-pointer
-INC              := -I$(INCDIR) -Ithird_party
+INC              := -I$(INCDIR) -Ithird_party -Ithird_party/fmt/include
 
 # CLI defined..
 EXTRA_LDFLAGS    :=
@@ -45,7 +45,8 @@ SRC_FILES        := \
 	$(SRCDIR)/matchmaking/tournament/base/tournament.cpp \
 	$(SRCDIR)/matchmaking/tournament/roundrobin/roundrobin.cpp \
 	$(SRCDIR)/matchmaking/tournament/tournament_manager.cpp \
-	$(THIRDPARTYDIR)/pyrrhic/tbprobe.cpp
+	$(THIRDPARTYDIR)/pyrrhic/tbprobe.cpp \
+	$(THIRDPARTYDIR)/fmt/src/format.cc
 
 SRC_FILES_TEST   := \
 	$(TESTDIR)/cli_test.cpp \
@@ -202,8 +203,10 @@ ifeq ($(HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR_NP),1)
     CXXFLAGS += -DHAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR_NP
 endif
 
-OBJECTS   := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(SRC_FILES))
-DEPENDS   := $(patsubst %.cpp,$(BUILDDIR)/%.d,$(SRC_FILES))
+OBJECTS   := $(patsubst %.cpp,$(BUILDDIR)/%.o,$(filter %.cpp,$(SRC_FILES))) \
+             $(patsubst %.cc,$(BUILDDIR)/%.o,$(filter %.cc,$(SRC_FILES)))
+DEPENDS   := $(patsubst %.cpp,$(BUILDDIR)/%.d,$(filter %.cpp,$(SRC_FILES))) \
+             $(patsubst %.cc,$(BUILDDIR)/%.d,$(filter %.cc,$(SRC_FILES)))
 
 .PHONY: clean all tests FORCE coverage
 
@@ -231,6 +234,9 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(NATIVE) $(INC) $(DEPFLAGS) -o $@ $^ $(LDFLAGS) $(EXTRA_LDFLAGS)
 
 $(BUILDDIR)/%.o: %.cpp | build_directories
+	$(CXX) $(CXXFLAGS) $(NATIVE) $(INC) $(DEPFLAGS) -c $< -o $@
+
+$(BUILDDIR)/%.o: %.cc | build_directories
 	$(CXX) $(CXXFLAGS) $(NATIVE) $(INC) $(DEPFLAGS) -c $< -o $@
 
 build_directories:
