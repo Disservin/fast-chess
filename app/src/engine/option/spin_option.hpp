@@ -21,7 +21,7 @@ class SpinOption : public UCIOption {
         this->maxValue = parseValue(maxValue);
 
         if (this->minValue > this->maxValue) {
-            throw fastchess_exception("Min value cannot be greater than max value.");
+            throw fastchess_exception::format("Option \"{}\": min value cannot be greater than max value.", name);
         }
     }
 
@@ -33,7 +33,8 @@ class SpinOption : public UCIOption {
         if (isValid(value)) {
             this->value = parsedValue;
         } else {
-            throw fastchess_exception("Value is out of the allowed range.");
+            throw fastchess_exception::format("Option \"{}\": value \"{}\" is out of the allowed range.", name,
+                                               value);
         }
     }
 

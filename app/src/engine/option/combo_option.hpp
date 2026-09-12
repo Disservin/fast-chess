@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <types/exception.hpp>
+
 #include "ucioption.hpp"
 
 namespace fastchess {
@@ -18,6 +20,9 @@ class ComboOption : public UCIOption {
     void setValue(const std::string& value) override {
         if (isValid(value)) {
             this->value = value;
+        } else {
+            throw fastchess_exception::format("Option \"{}\": value \"{}\" is not one of the allowed values.", name,
+                                               value);
         }
     }
 

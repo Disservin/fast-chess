@@ -1,5 +1,7 @@
 #pragma once
 
+#include <types/exception.hpp>
+
 #include "ucioption.hpp"
 
 namespace fastchess {
@@ -13,6 +15,8 @@ class CheckOption : public UCIOption {
     void setValue(const std::string& value) override {
         if (isValid(value)) {
             this->value = (value == "true");
+        } else {
+            throw fastchess_exception::format("Option \"{}\": value must be either \"true\" or \"false\".", name);
         }
     }
 
