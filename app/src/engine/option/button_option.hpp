@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <types/exception.hpp>
+
 #include "ucioption.hpp"
 
 namespace fastchess {
@@ -16,6 +18,8 @@ class ButtonOption : public UCIOption {
     void setValue(const std::string& value) override {
         if (isValid(value)) {
             this->value = true;
+        } else {
+            throw fastchess_exception::format("Option \"{}\": button value must be \"true\".", name);
         }
     }
 

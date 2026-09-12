@@ -51,36 +51,41 @@ TEST_SUITE("Uci Options") {
     TEST_CASE("Parse Spin Option Default String") {
         std::string line = "name x1 type spin default dsad min 0 max 321321.3213";
 
-        CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line), "The spin values are not numeric.",
-                             fastchess_exception);
+         CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line),
+                              "Option \"x1\": spin values must be numeric.",
+                              fastchess_exception);
     }
 
     TEST_CASE("Parse Spin Option Min String") {
         std::string line = "name x1 type spin default 3213.21 min foobar max 321321.3213";
 
-        CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line), "The spin values are not numeric.",
-                             fastchess_exception);
+         CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line),
+                              "Option \"x1\": spin values must be numeric.",
+                              fastchess_exception);
     }
 
     TEST_CASE("Parse Spin Option Max String") {
         std::string line = "name x1 type spin default 3213.21 min 321.321 max foobar";
 
-        CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line), "The spin values are not numeric.",
-                             fastchess_exception);
+         CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line),
+                              "Option \"x1\": spin values must be numeric.",
+                              fastchess_exception);
     }
 
     TEST_CASE("Parse Spin Option Min Larger Than Max") {
         std::string line = "name x1 type spin default 3213.21 min 10 max 0";
 
-        CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line), "Min value cannot be greater than max value.",
-                             fastchess_exception);
+         CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line),
+                              "Option \"x1\": min value cannot be greater than max value.",
+                              fastchess_exception);
     }
 
     TEST_CASE("Parse Spin Option Default Not In Range") {
         std::string line = "name x1 type spin default 3213 min 0 max 10";
 
-        CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line), "Value is out of the allowed range.",
-                             fastchess_exception);
+         CHECK_THROWS_WITH_AS(UCIOptionFactory::parseUCIOptionLine(line),
+                              "Option \"x1\": value \"3213\" is out of the allowed range.",
+                              fastchess_exception);
     }
 
     TEST_CASE("Parse Combo Option") {
