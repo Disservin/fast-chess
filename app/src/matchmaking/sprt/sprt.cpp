@@ -4,6 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include <iomanip>
+#include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -249,16 +250,15 @@ double SPRT::getLLR_normalized(double total, std::array<double, N> scores, std::
     //
     // [1]: Michel Van den Bergh, Comments on normalized Elo,
     // https://www.cantate.be/Fishtest/normalized_elo_practical.pdf
-    const auto mle = [&](double mu_ref, double t_star) -> std::array<double, N> {
+    const auto mle = [&](double mu_ref, double t_star) -> std::optional<std::array<double, N>> {
         const double theta_epsilon = 1e-7;
         const double mle_epsilon   = 1e-4;
 
         // This is an iterative method, so we need to start with an initial value. As suggested in [1], we start with a
         // uniform distribution.
         std::array<double, N> p;
-        std::fill(p.begin(), p.end(), 1.0 / N);
 
-        for (int iterations = 0; iterations < 10; iterations++) {
+        const auto calc_phi = [&]() -> std::tuple<std::array<double, N>, double, double> {
             // Calculate phi.
             auto [mu, var] = mean_and_variance(scores, p);
             std::array<double, N> phi;
@@ -270,8 +270,31 @@ double SPRT::getLLR_normalized(double total, std::array<double, N> scores, std::
 
             // We need to find a subset of the possible solutions for theta,
             // so we need to calculate our constraints for theta.
-            double u         = *std::min_element(phi.begin(), phi.end());
-            double v         = *std::max_element(phi.begin(), phi.end());
+            double u = *std::min_element(phi.begin(), phi.end());
+            double v = *std::max_element(phi.begin(), phi.end());
+
+            return {phi, u, v};
+        };
+
+        const auto is_valid_initial_value = [&]() -> bool {
+            auto [phi, u, v] = calc_phi();
+            return u * v < 0;
+        };
+
+        std::fill(p.begin(), p.end(), 1.0 / N);
+        if (!is_valid_initial_value()) {
+            p = probs;
+        }
+        if (!is_valid_initial_value()) {
+            return std::nullopt;  // Give up.
+        }
+
+        for (int iterations = 0; iterations < 10; iterations++) {
+            std::array<double, N> phi;
+            double u;
+            double v;
+            std::tie(phi, u, v) = calc_phi();
+
             double min_theta = -1.0 / v;
             double max_theta = -1.0 / u;
 
@@ -303,10 +326,13 @@ double SPRT::getLLR_normalized(double total, std::array<double, N> scores, std::
         return p;
     };
 
-    std::array<double, N> p0 = mle(0.5, t0);
-    std::array<double, N> p1 = mle(0.5, t1);
+    auto p0 = mle(0.5, t0);
+    auto p1 = mle(0.5, t1);
+
+    if (!p0 || !p1) return 0.0;
+
     std::array<double, N> lpr;
-    for (size_t i = 0; i < N; i++) lpr[i] = std::log(p1[i]) - std::log(p0[i]);
+    for (size_t i = 0; i < N; i++) lpr[i] = std::log((*p1)[i]) - std::log((*p0)[i]);
     return total * mean(lpr, probs);
 }
 
