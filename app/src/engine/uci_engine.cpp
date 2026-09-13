@@ -259,6 +259,10 @@ void UciEngine::loadConfig(const EngineConfiguration& config) { config_ = config
 void UciEngine::quit() {
     if (!initialized_) return;
 
+    if (!process_.alive()) return;
+
+    LOG_TRACE_THREAD("Trying to stop engine gracefully {}", config_.name);
+
     if (!writeEngine("stop")) {
         LOG_WARN_THREAD("Failed to send stop to engine {}", config_.name);
     }

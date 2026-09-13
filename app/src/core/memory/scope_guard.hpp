@@ -12,6 +12,7 @@ class ScopeEntry {
     ScopeEntry(bool available) : available_(available) {}
 
     void release() noexcept { available_ = true; }
+    bool isAvailable() const noexcept { return available_.load(); }
 
    protected:
     std::atomic<bool> available_;

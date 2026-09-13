@@ -55,6 +55,8 @@ class UciEngine {
 
     ~UciEngine() { quit(); }
 
+    void terminate() { process_.terminate(); }
+
     // Starts the engine, does nothing after the first call.
     // Returns false if the engine is not alive.
     [[nodiscard]] tl::expected<bool, std::string> start(const std::optional<std::vector<int>>& cpus);

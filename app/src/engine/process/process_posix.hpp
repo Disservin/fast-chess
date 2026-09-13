@@ -209,6 +209,9 @@ class Process : public IProcess {
     }
 
     Result alive() noexcept override {
+        if (terminated_) return Result::Error("process terminated");
+        if (startup_error_) return Result::Error("process failed to start");
+
         assert(is_initalized_);
 
         int status    = 0;
@@ -249,6 +252,7 @@ class Process : public IProcess {
         // log the status of the process
         Logger::readFromEngine(signalToString(status), time::datetime_precise(), log_name_, true);
         is_initalized_ = false;
+        terminated_    = true;
     }
 
     void setupRead() override {
@@ -460,6 +464,7 @@ class Process : public IProcess {
 
     bool is_initalized_ = false;
     bool startup_error_ = false;
+    bool terminated_    = false;
 
     pid_t process_pid_{0};
     Pipe in_pipe_, out_pipe_, err_pipe_;

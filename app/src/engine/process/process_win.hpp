@@ -102,6 +102,8 @@ class Process : public IProcess {
     }
 
     [[nodiscard]] Result alive() noexcept override {
+        if (terminated_) return Result::Error("process terminated");
+
         assert(is_initialized_);
 
         DWORD exitCode = 0;
@@ -131,12 +133,7 @@ class Process : public IProcess {
         // give the process time to die gracefully
         while (std::chrono::steady_clock::now() - start_time < IProcess::kill_timeout) {
             GetExitCodeProcess(pi_.hProcess, &exitCode);
-
-            if (exitCode != STILL_ACTIVE) {
-                // Process has terminated
-                break;
-            }
-
+            if (exitCode != STILL_ACTIVE) break;
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
@@ -150,6 +147,7 @@ class Process : public IProcess {
         }
 
         is_initialized_ = false;
+        terminated_     = true;
     }
 
     void setupRead() override { current_line_.clear(); }
@@ -353,6 +351,7 @@ class Process : public IProcess {
 
     // True if the process has been initialized
     bool is_initialized_ = false;
+    bool terminated_     = false;
 
     PROCESS_INFORMATION pi_;
 

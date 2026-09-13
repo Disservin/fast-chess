@@ -66,7 +66,7 @@ class IProcess {
     // Write input to the engine's stdin
     virtual Result writeInput(const std::string& input) noexcept = 0;
 
-    constexpr static std::chrono::seconds kill_timeout{60};
+    constexpr static std::chrono::seconds kill_timeout{10};
 
    protected:
     [[nodiscard]] std::string getPath(const std::string& dir, const std::string& cmd) const {
