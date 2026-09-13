@@ -98,6 +98,12 @@ class OptionsParser {
         result += " (assertions)";
 #endif
 
+#ifndef USE_ZLIB
+        result += " (no zlib)";
+#else
+        result += " (zlib)";
+#endif
+
         return result;
     }
 

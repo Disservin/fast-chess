@@ -15,12 +15,12 @@
 #include "fmt/include/fmt/std.h"
 
 #ifdef USE_ZLIB
-#    include <gzip/gzstream.h>
+#    include <core/logger/gzstream.hpp>
 
-class fcgzstream : public ogzstream {
+class fcgzstream : public fastchess::ogzstream {
    public:
-    fcgzstream() : ogzstream() {}
-    fcgzstream(const char* name, int mode = std::ios::out) : ogzstream(name, mode) {}
+    fcgzstream() : fastchess::ogzstream() {}
+    fcgzstream(const char* name, std::ios::openmode mode = std::ios::out) : fastchess::ogzstream(name, mode) {}
 
     bool is_open() { return rdbuf()->is_open(); }
 };

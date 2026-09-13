@@ -9,7 +9,7 @@
 #include <types/exception.hpp>
 
 #ifdef USE_ZLIB
-#    include <gzip/gzstream.h>
+#    include <core/logger/gzstream.hpp>
 #endif
 
 namespace {
