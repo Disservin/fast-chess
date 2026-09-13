@@ -36,6 +36,7 @@ void fixConfig(config::Tournament& config) {
 void setDefaults(config::Tournament& config) {
     if (config.ratinginterval == 0) config.ratinginterval = std::numeric_limits<int>::max();
     if (config.scoreinterval == 0) config.scoreinterval = std::numeric_limits<int>::max();
+    if (config.csv.interval == 0) config.csv.interval = config.ratinginterval;
 }
 
 void adjustConcurrency(config::Tournament& config) {

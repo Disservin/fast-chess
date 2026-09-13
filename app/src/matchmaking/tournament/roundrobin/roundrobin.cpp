@@ -129,6 +129,12 @@ void RoundRobin::createMatch(const Scheduler::Pairing& pairing) {
                                    scoreboard_);
         }
 
+        if (csv_report_ && ((shouldWriteCsvInterval(pairing.pairing_id) &&
+                             scoreboard_.isPairCompleted(pairing.pairing_id)) ||
+                            allMatchesPlayed())) {
+            csv_report_->update(sprt_, updated_stats);
+        }
+
         updateSprtStatus({first, second}, engines);
 
         match_count_++;
@@ -161,6 +167,11 @@ void RoundRobin::updateSprtStatus(const std::vector<EngineConfiguration>& engine
         output_->printInterval(sprt_, stats, engine_configs[0].name, engine_configs[1].name, engines,
                                config::TournamentConfig->opening.file, scoreboard_);
         output_->endTournament(terminationMessage);
+
+        // record the point which crossed the bound, whatever the csv interval is
+        if (csv_report_ && !csv_final_written_.exchange(true)) {
+            csv_report_->update(sprt_, stats);
+        }
     }
 }
 
@@ -171,6 +182,16 @@ bool RoundRobin::shouldPrintRatingInterval(std::size_t round_id) const noexcept 
     const auto ratinginterval_index = cfg.report_penta ? round_id + 1 : match_count_ + 1;
 
     return ratinginterval_index % cfg.ratinginterval == 0;
+}
+
+bool RoundRobin::shouldWriteCsvInterval(std::size_t round_id) const noexcept {
+    const auto& cfg = *config::TournamentConfig;
+
+    // round_id and match_count_ starts 0 so we add 1
+    const auto csvinterval_index = cfg.report_penta ? round_id + 1 : match_count_ + 1;
+    const auto interval          = cfg.csv.interval > 0 ? cfg.csv.interval : 1;
+
+    return csvinterval_index % interval == 0;
 }
 
 bool RoundRobin::shouldPrintScoreInterval() const noexcept {

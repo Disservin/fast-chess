@@ -681,6 +681,30 @@ TEST_SUITE("Option Parsing Tests") {
                              fastchess_exception);
     }
 
+    TEST_CASE("Csvout options parse correctly") {
+        const cli::OptionsParser parser{
+            baseArgs({"-csvout", "file=sprt.csv", "append=true", "interval=5", "sep=;", "-ratinginterval", "20"})};
+        const auto config = parser.getTournamentConfig();
+        CHECK(config.csv.file == "sprt.csv");
+        CHECK(config.csv.append_file);
+        CHECK(config.csv.interval == 5);
+        CHECK(config.csv.separator == ";");
+    }
+
+    TEST_CASE("Csvout interval defaults to ratinginterval") {
+        const cli::OptionsParser parser{baseArgs({"-csvout", "file=sprt.csv", "-ratinginterval", "20"})};
+        const auto config = parser.getTournamentConfig();
+        CHECK(config.csv.interval == 20);
+        CHECK(config.csv.separator == ",");
+        CHECK(config.csv.append_file == false);
+    }
+
+    TEST_CASE("Csvout without a file gets a default filename") {
+        const cli::OptionsParser parser{baseArgs({"-csvout"})};
+        const std::regex csv_pattern(R"(fastchess_\d{8}_\d{6}\.csv)");
+        CHECK(std::regex_match(parser.getTournamentConfig().csv.file, csv_pattern));
+    }
+
     TEST_CASE("Unknown option should throw an error") {
         const auto args = cli::Args{"fastchess.exe", "-unknown"};
         CHECK_THROWS_AS(cli::OptionsParser{args}, fastchess_exception);

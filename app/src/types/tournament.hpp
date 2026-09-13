@@ -7,6 +7,7 @@
 #include <core/helper.hpp>
 #include <core/rand.hpp>
 
+#include <types/csv.hpp>
 #include <types/draw_adjudication.hpp>
 #include <types/engine_config.hpp>
 #include <types/enums.hpp>
@@ -25,6 +26,8 @@ struct Tournament {
     Opening opening = {};
     Pgn pgn         = {};
     Epd epd         = {};
+    // not part of the json config, -csvout has to be passed again when resuming
+    Csv csv = {};
 
     Sprt sprt = {};
 

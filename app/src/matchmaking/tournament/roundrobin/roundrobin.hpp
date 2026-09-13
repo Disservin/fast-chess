@@ -37,6 +37,9 @@ class RoundRobin : public BaseTournament {
     // print score result based on scoreinterval if output format is cutechess
     bool shouldPrintScoreInterval() const noexcept;
 
+    // append a row to the csv report based on its own interval
+    bool shouldWriteCsvInterval(std::size_t round_id) const noexcept;
+
     bool allMatchesPlayed() const noexcept { return match_count_ + 1 == final_matchcount_; }
 
     void createMatch(const Scheduler::Pairing& pairing);
@@ -45,6 +48,8 @@ class RoundRobin : public BaseTournament {
     void updateSprtStatus(const std::vector<EngineConfiguration>& engine_configs, const engines& engines);
 
     SPRT sprt_ = SPRT();
+
+    std::atomic<bool> csv_final_written_ = false;
 
     std::mutex output_mutex_;
     std::mutex game_gen_mutex_;

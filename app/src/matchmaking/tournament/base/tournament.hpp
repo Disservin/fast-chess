@@ -15,6 +15,7 @@
 #include <engine/uci_engine.hpp>
 #include <game/book/opening_book.hpp>
 #include <matchmaking/game_pair.hpp>
+#include <matchmaking/output/csv_report.hpp>
 #include <matchmaking/output/output.hpp>
 #include <matchmaking/scoreboard.hpp>
 #include <matchmaking/timeout_tracker.hpp>
@@ -64,6 +65,7 @@ class BaseTournament {
     std::unique_ptr<affinity::AffinityManager> cores_;
     std::unique_ptr<util::FileWriter> file_writer_pgn_;
     std::unique_ptr<util::FileWriter> file_writer_epd_;
+    std::unique_ptr<CsvReport> csv_report_;
     std::unique_ptr<book::OpeningBook> book_;
 
     std::atomic<std::uint64_t> match_count_      = 0;

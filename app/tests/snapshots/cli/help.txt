@@ -230,6 +230,26 @@ first value in parentheses.
         fastchess_(date)_(time).epd.
       - append - Append to file. Default is true.
 
+  - -csvout [file=NAME] [append=(true|false)] [interval=N] [sep=CHAR]
+    Export the running llr and elo to a CSV file, one row per
+    interval, so that they can be plotted against the number of
+    games. Purely observational, it does not affect the SPRT nor the
+    scheduling. Not stored in the config file, so it has to be passed
+    again when resuming with -config.
+
+    Columns: iteration, games, pairs, llr, llr_lower, llr_upper, elo,
+    elo_err, elo_lower, elo_upper, nelo, nelo_err, score, wins,
+    losses, draws and the pentanomial counts LL, LD, WLDD, WD, WW.
+    The llr columns are left empty without -sprt.
+
+      - file - Specify filename. Default is
+        fastchess_(date)_(time).csv.
+      - append - Append to file. Default is false. The header is only
+        written when the file is empty.
+      - interval - Pairs (games without -report penta) between two
+        rows. Default is the value of -ratinginterval.
+      - sep - Column separator. Default is ,.
+
   - -event NAME
     Set the event name for the PGN header.
 

@@ -301,6 +301,25 @@ void parseEpdOut(const KeyValuePairs& params, ArgumentData& argument_data) {
     }
 }
 
+void parseCsvOut(const KeyValuePairs& params, ArgumentData& argument_data) {
+    argument_data.tournament_config.csv.file =
+        fmt::format("fastchess_{}.csv", time::datetime("%Y%m%d_%H%M%S").value_or(""));
+
+    for (const auto& [key, value] : params) {
+        if (key == "file") {
+            argument_data.tournament_config.csv.file = value;
+        } else if (key == "append" && is_bool(value)) {
+            argument_data.tournament_config.csv.append_file = value == "true";
+        } else if (key == "interval") {
+            argument_data.tournament_config.csv.interval = parseScalar<int>(value);
+        } else if (key == "sep") {
+            argument_data.tournament_config.csv.separator = value;
+        } else {
+            OptionsParser::throwMissing("csvout", key, value);
+        }
+    }
+}
+
 void parseOpening(const KeyValuePairs& params, ArgumentData& argument_data) {
     for (const auto& [key, value] : params) {
         if (key == "file") {
@@ -777,6 +796,7 @@ void OptionsParser::registerOptions() {
     addOption<ParamStyle::KeyValue, Dispatch::Deferred>("each", parseEach);
     addOption<ParamStyle::KeyValueOptional>("pgnout", parsePgnOut);
     addOption<ParamStyle::KeyValueOptional>("epdout", parseEpdOut);
+    addOption<ParamStyle::KeyValueOptional>("csvout", parseCsvOut);
     addOption<ParamStyle::KeyValue>("openings", parseOpening);
     addOption<ParamStyle::KeyValue>("sprt", parseSprt);
     addOption<ParamStyle::KeyValue>("draw", parseDraw);

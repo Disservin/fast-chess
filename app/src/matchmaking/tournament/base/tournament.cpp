@@ -18,6 +18,7 @@
 #include <game/epd/epd_builder.hpp>
 #include <game/pgn/pgn_builder.hpp>
 #include <matchmaking/match/match.hpp>
+#include <matchmaking/output/csv_report.hpp>
 #include <matchmaking/output/output.hpp>
 #include <matchmaking/output/output_factory.hpp>
 #include <matchmaking/scoreboard.hpp>
@@ -53,6 +54,11 @@ BaseTournament::BaseTournament(const stats_map& results) {
     if (!config.epd.file.empty()) {
         const bool append = resolveAppendFlag(config.epd.append_file, "-epdout");
         file_writer_epd_  = std::make_unique<util::FileWriter>(config.epd.file, append);
+    }
+
+    if (!config.csv.file.empty()) {
+        const bool append = resolveAppendFlag(config.csv.append_file, "-csvout");
+        csv_report_ = std::make_unique<CsvReport>(config.csv.file, append, config.csv.separator, config.report_penta);
     }
 
     pool_.resize(config.concurrency);
